@@ -1,0 +1,84 @@
+﻿using AuthService.Application.Features.Users.LoginUser;
+using AuthService.Application.Features.Users.RefreshTokenUser;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Shared.Auth.Interfaces;
+using Shared.Common.Interfaces;
+using System.Security.Claims;
+
+namespace AuthService.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
+    {
+        private readonly IMediator _mediator;
+        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IJwtTokenValidator _jwtTokenValidator;
+
+        public UsersController(IMediator mediator, IDateTimeProvider dateTimeProvider, IJwtTokenValidator jwtTokenValidator)
+        {
+            _mediator = mediator;
+            _dateTimeProvider = dateTimeProvider;
+            _jwtTokenValidator = jwtTokenValidator;
+        }
+
+        [HttpPost(nameof(Login))]
+        public async Task<IActionResult> Login(LoginUserRequest request)
+        {
+            var response = await _mediator.Send(request);
+            
+            if (!response.IsSuccess)
+                return Unauthorized(response);
+
+            Response.Cookies.Append("refreshToken", response.Value.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = _dateTimeProvider.UtcNow.AddDays(7)
+            });
+
+            return Ok(new
+            {
+                response.Value.Token
+            });
+        }
+
+        [HttpPost(nameof(RefreshToken))]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized("Refresh token bulunamadı");
+
+            var userClaims = _jwtTokenValidator.GetPrincipalFromRefreshToken(refreshToken);
+            string? userEmail = userClaims?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail)) 
+                return Unauthorized("User email bulunamadı");
+
+            var result = await _mediator.Send(new RefreshTokenUserRequest
+            {
+                Email = userEmail
+            });
+
+            if (!result.IsSuccess)
+                return Unauthorized(result.Error);
+
+            Response.Cookies.Append("refreshToken", result.Value.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+
+            return Ok(new
+            {
+                result.Value.Token
+            }); 
+        }
+    }
+}
