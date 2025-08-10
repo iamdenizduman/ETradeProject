@@ -237,3 +237,132 @@ Response.Cookies.Append("refreshToken", result.Value.RefreshToken, new CookieOpt
 Eksik yönler: çoklu oturum desteği, loglama, yapılandırılabilir expire süreleri ve refresh token geçersizleştirme senaryolarıdır.
 
 ---
+## `RegisterUser` Endpointi Analiz ve Dokümantasyonu
+
+### 📌 Amaç:
+
+`RegisterUser` endpointi, yeni bir kullanıcının kaydını gerçekleştirerek Access ve Refresh Token oluşturur. Aşağıdaki işlemleri gerçekleştirir:
+
+- Eğer e-posta sistemde varsa kayıt engellenir,
+- Parola hash ve salt üretilir,
+- Kullanıcı verisi kaydedilir,
+- Kullanıcıya varsayılan olarak `Customer` rolü atanır,
+- Access ve Refresh token oluşturulur,
+- Refresh Token Redis'e kaydedilir,
+- Kullanıcıya yanıt olarak token'lar dönülür.
+
+---
+
+## 🥪 Sorumluluklar ve Katmanlar
+
+| Bağımlılık                           | Sorumluluk                                                      |
+| ------------------------------------ | --------------------------------------------------------------- |
+| `IUserReadRepository`                | Kullanıcının daha önceden kayıtlı olup olmadığını kontrol eder. |
+| `IUserWriteRepository`               | Yeni kullanıcı kaydı yapar.                                     |
+| `IOperationClaimReadRepository`      | Sistem rolleri arasından `Customer` rolünü alır.                |
+| `IUserOperationClaimWriteRepository` | Yeni kullanıcıya `Customer` rolünü atar.                        |
+| `IHashingHelper`                     | Parola hash/salt oluşturur.                                     |
+| `IJwtTokenGenerator`                 | Token oluşturur.                                                |
+| `IDateTimeProvider`                  | Tarih/expire hesapları için zaman bilgisi sağlar.               |
+| `IUserRedisService`                  | Refresh token'ı Redis'e yazar.                                  |
+| `IUnitOfWork`                        | Değişikliklerin veritabanına kaydından sorumludur.              |
+
+---
+
+## 🥪 Akış Detayı
+
+### 1. **E-posta Kontrolü**
+
+```csharp
+var user = await _userReadRepository.GetUserRoleByEmailAsync(request.Email);
+```
+
+- Eğer kullanıcı zaten varsa hata dönülür.    
+
+### 2. **Parola Hash ve Kullanıcı Kaydı**
+
+```csharp
+_hashingHelper.CreatePasswordHash(...);
+await _userWriteRepository.AddAsync(newUser);
+```
+
+- Parola hashlenir ve kullanıcı oluşturulur.
+
+### 3. **Rol Atama**
+
+```csharp
+var customerRoleId = ...;
+await _userOperationClaimWriteRepository.AddAsync(...);
+```
+
+- Yeni kullanıcıya varsayılan rol (Customer) atanır.
+
+### 4. **Access ve Refresh Token Oluşturma**
+
+```csharp
+var accessToken = _jwtTokenGenerator.GenerateToken(...);
+var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(...);
+```
+
+### 5. **Redis'e Refresh Token Yazılması**
+
+```csharp
+await _userRedisService.SetAsync(key, refreshToken.Token, expiration);
+```
+
+- Refresh token Redis'e yazılır.
+
+### 6. **Veritabanına Kaydetme ve Yanıt**
+
+```csharp
+await _unitOfWork.SaveChangesAsync();
+return Result<RegisterUserResponse>.Success(...);
+```
+
+---
+
+## ✅ Güçlü Yönler
+
+- Katmanlı mımari    
+- Roller için ayrı katman
+- Hash + Salt parola yapısı
+- Token bazlı authentication mimarisi
+- Redis kullanımı
+
+---
+
+## ❗️ İyileştirme Önerileri
+
+- **Loglama eksik**: Kayıt hataları loglanmıyor.    
+- **Email onay mekanizması yok**: Doğrulama kodu gönderimi yok.
+- **Expire ve claim config dosyasından okunmuyor**.
+- **Refresh Token device bazlı değil**: Aynı e-posta ile birden fazla oturum desteklenmiyor.
+
+---
+
+## 📆 Request Örneği
+
+```json
+POST /api/users/register
+Content-Type: application/json
+
+{
+  "firstName": "Ahmet",
+  "lastName": "Yılmaz",
+  "email": "ahmet@example.com",
+  "password": "123456"
+}
+```
+## 📆 Response Örneği
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "c4a7c8bd-a0ff-4ff2-8c7a-3efb5ec5f379",
+  "userId": 42,
+  "email": "ahmet@example.com",
+  "fullName": "Ahmet Yılmaz"
+}
+```
+
+---
