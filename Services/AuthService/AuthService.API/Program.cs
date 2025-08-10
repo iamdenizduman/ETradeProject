@@ -1,6 +1,10 @@
 using AuthService.Application;
-using AuthService.Persistence;
+using AuthService.Application.Common.Behaviors;
+using AuthService.Application.Features.Users.RegisterUser;
 using AuthService.Infrastructure;
+using AuthService.Persistence;
+using FluentValidation;
+using MediatR;
 using Shared.Auth;
 using Shared.Auth.Interfaces;
 using Shared.Auth.Models;
@@ -31,6 +35,8 @@ builder.Services.AddPersistenceServices(connectionString);
 
 #region Auth.Application 
 builder.Services.AddApplicationServices();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserRequestValidator>();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 #endregion
 
 #region Auth.Infrastructure 
