@@ -3,6 +3,8 @@ using AuthService.Persistence.Context;
 using AuthService.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Persistence;
+using Shared.Persistence.Interfaces.EFCore;
 
 namespace AuthService.Persistence
 {
@@ -22,6 +24,7 @@ namespace AuthService.Persistence
             services.AddScoped<IUserOperationClaimWriteRepository, UserOperationClaimWriteRepository>();
             services.AddScoped<IUserReadRepository, UserReadRepository>();
             services.AddScoped<IUserWriteRepository, UserWriteRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork<AuthDbContext>>();
             #endregion
         }
     }

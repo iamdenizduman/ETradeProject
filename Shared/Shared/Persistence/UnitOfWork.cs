@@ -3,11 +3,12 @@ using Shared.Persistence.Interfaces.EFCore;
 
 namespace Shared.Persistence
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork<TContext> : IUnitOfWork
+        where TContext : DbContext
     {
-        private readonly DbContext _dbContext;
+        private readonly TContext _dbContext;
 
-        public UnitOfWork(DbContext dbContext)
+        public UnitOfWork(TContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
