@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-# ETradeProject
-=======
-# 🔐  AuthService.API
+# 🔐 AuthService.API
 
 ## `LoginUser` Endpointi Analiz ve Dokümantasyonu
 
@@ -12,8 +9,9 @@
 - Access Token ve Refresh Token üretir,
 - Refresh Token'ı Redis'e kaydeder,
 - Token'ları yanıt olarak döner.
-    
+
 ---
+
 ## 🧹 Sorumluluklar ve Katmanlar
 
 | Bağımlılık            | Sorumluluk                                                                        |
@@ -140,15 +138,15 @@ Eksik olan alanlar: loglama, rate-limiting, token çoklu oturum senaryoları ve 
 
 ## 🧹 Sorumluluklar ve Katmanlar
 
-|   |   |
-|---|---|
-|Bağımlılık|Sorumluluk|
-|`IJwtTokenValidator`|Refresh token'dan kullanıcı bilgilerini çıkarır.|
-|`IMediator`|`RefreshTokenUserRequest` ile iş akışını başlatır.|
-|`IUserReadRepository`|E-posta ile kullanıcıyı getirir.|
-|`IUserRedisService`|Refresh Token geçerliliğini Redis'te kontrol eder.|
-|`IJwtTokenGenerator`|Yeni Access Token ve Refresh Token üretir.|
-|`IDateTimeProvider`|Token süresi hesaplamalarında zaman sağlar.|
+|                       |                                                    |
+| --------------------- | -------------------------------------------------- |
+| Bağımlılık            | Sorumluluk                                         |
+| `IJwtTokenValidator`  | Refresh token'dan kullanıcı bilgilerini çıkarır.   |
+| `IMediator`           | `RefreshTokenUserRequest` ile iş akışını başlatır. |
+| `IUserReadRepository` | E-posta ile kullanıcıyı getirir.                   |
+| `IUserRedisService`   | Refresh Token geçerliliğini Redis'te kontrol eder. |
+| `IJwtTokenGenerator`  | Yeni Access Token ve Refresh Token üretir.         |
+| `IDateTimeProvider`   | Token süresi hesaplamalarında zaman sağlar.        |
 
 ---
 
@@ -240,6 +238,7 @@ Response.Cookies.Append("refreshToken", result.Value.RefreshToken, new CookieOpt
 Eksik yönler: çoklu oturum desteği, loglama, yapılandırılabilir expire süreleri ve refresh token geçersizleştirme senaryolarıdır.
 
 ---
+
 ## `RegisterUser` Endpointi Analiz ve Dokümantasyonu
 
 ### 📌 Amaç:
@@ -280,7 +279,7 @@ Eksik yönler: çoklu oturum desteği, loglama, yapılandırılabilir expire sü
 var user = await _userReadRepository.GetUserRoleByEmailAsync(request.Email);
 ```
 
-- Eğer kullanıcı zaten varsa hata dönülür.    
+- Eğer kullanıcı zaten varsa hata dönülür.
 
 ### 2. **Parola Hash ve Kullanıcı Kaydı**
 
@@ -326,7 +325,7 @@ return Result<RegisterUserResponse>.Success(...);
 
 ## ✅ Güçlü Yönler
 
-- Katmanlı mımari    
+- Katmanlı mımari
 - Roller için ayrı katman
 - Hash + Salt parola yapısı
 - Token bazlı authentication mimarisi
@@ -336,7 +335,7 @@ return Result<RegisterUserResponse>.Success(...);
 
 ## ❗️ İyileştirme Önerileri
 
-- **Loglama eksik**: Kayıt hataları loglanmıyor.    
+- **Loglama eksik**: Kayıt hataları loglanmıyor.
 - **Email onay mekanizması yok**: Doğrulama kodu gönderimi yok.
 - **Expire ve claim config dosyasından okunmuyor**.
 - **Refresh Token device bazlı değil**: Aynı e-posta ile birden fazla oturum desteklenmiyor.
@@ -356,6 +355,7 @@ Content-Type: application/json
   "password": "123456"
 }
 ```
+
 ## 📆 Response Örneği
 
 ```json
@@ -367,6 +367,3 @@ Content-Type: application/json
   "fullName": "Ahmet Yılmaz"
 }
 ```
-
----
->>>>>>> master
