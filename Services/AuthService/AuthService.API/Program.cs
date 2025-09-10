@@ -25,7 +25,6 @@ builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddSingleton<IHashingHelper, HashingHelper>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.Configure<RedisOptions>(builder.Configuration.GetSection("Redis"));
-builder.Services.AddSingleton<IJwtTokenValidator, JwtTokenValidator>();
 #endregion
 
 #region Auth.Persistence 

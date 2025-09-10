@@ -5,6 +5,7 @@ using Shared.Auth.Models;
 using Shared.Common.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Shared.Auth
@@ -48,28 +49,15 @@ namespace Shared.Auth
 
         public RefreshToken GenerateRefreshToken(string email)
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret));
-            var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
             {
-                 new Claim(JwtRegisteredClaimNames.Email, email),
-            };
+                rng.GetBytes(randomNumber);
+            }
 
-            var token = new JwtSecurityToken(
-                issuer: _settings.Issuer,
-                audience: _settings.Audience,
-                notBefore: _dateTimeProvider.UtcNow,
-                claims: claims,
-                expires: _dateTimeProvider.UtcNow.AddDays(_settings.ExpiryDays),
-                signingCredentials: credentials
-            );
-
-            var refreshToken = new JwtSecurityTokenHandler().WriteToken(token);
-            
             return new RefreshToken
             {
-                Token = refreshToken,
+                Token = Convert.ToBase64String(randomNumber),
                 Expires = _dateTimeProvider.UtcNow.AddDays(7)
             };
         }

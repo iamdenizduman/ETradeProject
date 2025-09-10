@@ -16,13 +16,11 @@ namespace AuthService.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IJwtTokenValidator _jwtTokenValidator;
 
-        public UsersController(IMediator mediator, IDateTimeProvider dateTimeProvider, IJwtTokenValidator jwtTokenValidator)
+        public UsersController(IMediator mediator, IDateTimeProvider dateTimeProvider)
         {
             _mediator = mediator;
             _dateTimeProvider = dateTimeProvider;
-            _jwtTokenValidator = jwtTokenValidator;
         }
 
         [HttpPost(nameof(Login))]
@@ -55,14 +53,9 @@ namespace AuthService.API.Controllers
             if (string.IsNullOrEmpty(refreshToken))
                 return Unauthorized("Refresh token bulunamadı");
 
-            var userClaims = _jwtTokenValidator.GetPrincipalFromRefreshToken(refreshToken);
-            string? userEmail = userClaims?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(userEmail)) 
-                return Unauthorized("User email bulunamadı");
-
             var result = await _mediator.Send(new RefreshTokenUserRequest
             {
-                Email = userEmail
+                RefreshToken = refreshToken
             });
 
             if (!result.IsSuccess)

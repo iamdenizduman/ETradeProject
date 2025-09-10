@@ -26,28 +26,28 @@ namespace AuthService.Application.Features.Users.RefreshTokenUser
         public async Task<Result<RefreshTokenUserResponse>> Handle(RefreshTokenUserRequest request,
             CancellationToken cancellationToken)
         {
-            bool isExistRefreshToken = await _userRedisService.IsExistRefreshTokenByEmail(request.Email);
-            if(!isExistRefreshToken)
+            string email = await _userRedisService.GetEmailByRefreshToken(request.RefreshToken);
+            if(string.IsNullOrEmpty(email))
                 return Result<RefreshTokenUserResponse>.Failure("Refresh token geçersiz");
 
-            var user = await _userReadRepository.GetUserRoleByEmailAsync(request.Email);
+            var user = await _userReadRepository.GetUserRoleByEmailAsync(email);
             if (user == null)
                 return Result<RefreshTokenUserResponse>.Failure("Kullanıcı bulunamadı.");
 
             var newAccessToken = _jwtTokenGenerator.GenerateToken(user.Id, user.Email,
                                  user?.UserOperationClaims?.FirstOrDefault()?.OperationClaim.Role);
 
-            var newRefreshToken = _jwtTokenGenerator.GenerateRefreshToken(user.Email);
+            var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(user.Email);
 
-            var key = $"refreshToken:{user.Email}";
-            var expiration = newRefreshToken.Expires - _dateTimeProvider.UtcNow;
+            var key = $"refreshToken:{refreshToken.Token}";
+            var expiration = refreshToken.Expires - _dateTimeProvider.UtcNow;
 
-            await _userRedisService.SetAsync(key, newRefreshToken.Token, expiration);
+            await _userRedisService.SetAsync(key, email, expiration);
 
             return Result<RefreshTokenUserResponse>.Success(new RefreshTokenUserResponse
             {
                 Token = newAccessToken,
-                RefreshToken = newRefreshToken.Token
+                RefreshToken = refreshToken.Token
             });
         }
     }

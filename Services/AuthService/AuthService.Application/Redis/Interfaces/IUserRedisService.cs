@@ -1,6 +1,6 @@
 ﻿using Shared.Infrastructure.Redis.Interfaces;
 
-namespace AuthService.Infrastructure.Redis.Interfaces
+namespace AuthService.Application.Redis.Interfaces
 {
     public interface IUserRedisService : IRedisService
     {

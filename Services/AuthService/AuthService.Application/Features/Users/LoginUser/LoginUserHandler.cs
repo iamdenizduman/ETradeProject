@@ -45,9 +45,9 @@ namespace AuthService.Application.Features.Users.LoginUser
 
                 var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(user.Email);
 
-                var key = $"refreshToken:{user.Email}";
+                var key = $"refreshToken:{refreshToken.Token}";
                 var expiration = refreshToken.Expires - _dateTimeProvider.UtcNow;
-                await _userRedisService.SetAsync(key, refreshToken.Token, expiration);
+                await _userRedisService.SetAsync(key, request.Email, expiration);
 
                 return Result<LoginUserResponse>.Success(new LoginUserResponse
                 {
