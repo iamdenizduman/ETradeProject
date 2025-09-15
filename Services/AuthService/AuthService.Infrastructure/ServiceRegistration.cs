@@ -1,5 +1,5 @@
-﻿using AuthService.Infrastructure.Redis;
-using AuthService.Infrastructure.Redis.Interfaces;
+﻿using AuthService.Application.Redis.Interfaces;
+using AuthService.Infrastructure.Redis;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AuthService.Infrastructure

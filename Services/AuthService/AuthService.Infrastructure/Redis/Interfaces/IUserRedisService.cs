@@ -1,9 +1,0 @@
-﻿using Shared.Infrastructure.Redis.Interfaces;
-
-namespace AuthService.Infrastructure.Redis.Interfaces
-{
-    public interface IUserRedisService : IRedisService
-    {
-        Task<string> GetEmailByRefreshToken(string refreshToken);
-    }
-}

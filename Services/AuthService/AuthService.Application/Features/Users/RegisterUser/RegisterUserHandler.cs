@@ -1,6 +1,6 @@
-﻿using AuthService.Application.Repositories.Interfaces;
+﻿using AuthService.Application.Redis.Interfaces;
+using AuthService.Application.Repositories.Interfaces;
 using AuthService.Domain.Entities;
-using AuthService.Infrastructure.Redis.Interfaces;
 using MediatR;
 using Shared.Auth.Enums;
 using Shared.Auth.Interfaces;

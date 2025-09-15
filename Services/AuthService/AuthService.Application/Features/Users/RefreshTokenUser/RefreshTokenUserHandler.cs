@@ -1,5 +1,5 @@
-﻿using AuthService.Application.Repositories.Interfaces;
-using AuthService.Infrastructure.Redis.Interfaces;
+﻿using AuthService.Application.Redis.Interfaces;
+using AuthService.Application.Repositories.Interfaces;
 using MediatR;
 using Shared.Auth.Interfaces;
 using Shared.Common;

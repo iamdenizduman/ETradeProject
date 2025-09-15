@@ -1,4 +1,4 @@
-﻿using AuthService.Infrastructure.Redis.Interfaces;
+﻿using AuthService.Application.Redis.Interfaces;
 using Microsoft.Extensions.Options;
 using Shared.Common.Interfaces;
 using Shared.Infrastructure.Redis;
