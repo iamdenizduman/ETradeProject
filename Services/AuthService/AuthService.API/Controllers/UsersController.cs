@@ -3,10 +3,7 @@ using AuthService.Application.Features.Users.RefreshTokenUser;
 using AuthService.Application.Features.Users.RegisterUser;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Shared.Auth.Interfaces;
 using Shared.Common.Interfaces;
-using System.Security.Claims;
 
 namespace AuthService.API.Controllers
 {
