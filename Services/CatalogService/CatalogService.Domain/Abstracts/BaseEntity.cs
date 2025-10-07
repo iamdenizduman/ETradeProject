@@ -3,10 +3,18 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace CatalogService.Domain.Abstracts
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity : IEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; protected set; } = ObjectId.GenerateNewId().ToString();
+        public string Id { get; protected set; }
+        public DateTime CreatedAt { get; protected set; }
+        public DateTime? UpdatedAt { get; protected set; }
+
+        protected BaseEntity()
+        {
+            Id = ObjectId.GenerateNewId().ToString();
+            CreatedAt = DateTime.UtcNow;
+        }
     }
 }
