@@ -8,6 +8,7 @@ namespace CatalogService.Domain.Abstracts
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; protected set; }
+        public bool RecordStatus { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime? UpdatedAt { get; protected set; }
 
@@ -15,6 +16,7 @@ namespace CatalogService.Domain.Abstracts
         {
             Id = ObjectId.GenerateNewId().ToString();
             CreatedAt = DateTime.UtcNow;
+            RecordStatus = true;
         }
     }
 }
