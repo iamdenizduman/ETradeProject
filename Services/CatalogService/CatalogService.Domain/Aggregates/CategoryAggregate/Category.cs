@@ -1,5 +1,7 @@
 ﻿using CatalogService.Domain.Abstracts;
+using CatalogService.Domain.Aggregates.CategoryAggregate.Events;
 using CatalogService.Domain.Aggregates.CategoryAggregate.Exceptions;
+using CatalogService.Domain.Aggregates.ProductAggregate.ValueObjects;
 
 namespace CatalogService.Domain.Aggregates.CategoryAggregate
 {
@@ -16,6 +18,20 @@ namespace CatalogService.Domain.Aggregates.CategoryAggregate
             ValidateCategoryName(name);
             Name = name;
             UpdatedAt = DateTime.UtcNow;            
+        }
+        public void Deactivate()
+        {
+            RecordStatus = false;
+            UpdatedAt = DateTime.UtcNow;
+            AddDomainEvent(new CategoryDeactivatedEvent()
+            {
+                CategoryId = new CategoryId(Id)
+            });
+        }
+        public void Activate()
+        {
+            RecordStatus = true;
+            UpdatedAt = DateTime.UtcNow;
         }
         private static void ValidateCategoryName(string name)
         {

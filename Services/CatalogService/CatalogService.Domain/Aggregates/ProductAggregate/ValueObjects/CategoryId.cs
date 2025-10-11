@@ -4,12 +4,12 @@ namespace CatalogService.Domain.Aggregates.ProductAggregate.ValueObjects
 {
     public record CategoryId
     {
-        public Guid Value { get; }
-        public CategoryId(Guid value)
+        public string Id { get; }
+        public CategoryId(string id)
         {
-            if (value == Guid.Empty)
+            if (string.IsNullOrEmpty(id))
                 throw new ProductDomainExcepiton("CategoryId boş olamaz.");
-            Value = value;
+            Id = id;
         }
     }
 }
