@@ -2,11 +2,11 @@
 using CatalogService.Domain.Aggregates.ProductAggregate.ValueObjects;
 using MongoDB.Driver;
 
-namespace CatalogService.Application
+namespace CatalogService.Application.Repositories
 {
     public interface ICategoryRepository : IRepository<Category>
     {
         Task<Category> GetCategoryByCategoryId(CategoryId categoryId);
-        Task UpdateCategoryAsync(Category category, IClientSessionHandle? Session);
+        Task UpdateCategoryAsync(Category category, IClientSessionHandle session);
     }
 }

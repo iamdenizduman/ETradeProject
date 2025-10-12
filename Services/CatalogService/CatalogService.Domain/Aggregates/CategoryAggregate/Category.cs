@@ -36,10 +36,10 @@ namespace CatalogService.Domain.Aggregates.CategoryAggregate
         private static void ValidateCategoryName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new CategoryDomainException("Category name cannot be empty.");
+                throw new CategoryDomainException("Kategori adı boş geçilemez.");
 
             if (name.Length < 3)
-                throw new CategoryDomainException("Category name must be at least 3 characters.");
+                throw new CategoryDomainException("Kategori adı en az 3 karakter olmalıdır.");
         }
     }
 }

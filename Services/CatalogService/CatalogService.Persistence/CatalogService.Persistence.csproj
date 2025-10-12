@@ -7,13 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="12.0.0" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CatalogService.Domain\CatalogService.Domain.csproj" />
+    <ProjectReference Include="..\CatalogService.Application\CatalogService.Application.csproj" />
   </ItemGroup>
 
 </Project>

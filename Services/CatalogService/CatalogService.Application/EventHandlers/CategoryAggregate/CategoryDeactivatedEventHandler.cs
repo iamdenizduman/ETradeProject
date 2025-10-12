@@ -1,4 +1,5 @@
-﻿using CatalogService.Domain.Aggregates.CategoryAggregate.Events;
+﻿using CatalogService.Application.Repositories;
+using CatalogService.Domain.Aggregates.CategoryAggregate.Events;
 using MediatR;
 
 namespace CatalogService.Application.EventHandlers.CategoryAggregate

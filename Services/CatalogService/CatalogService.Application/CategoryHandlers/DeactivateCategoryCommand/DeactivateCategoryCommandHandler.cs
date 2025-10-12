@@ -1,4 +1,5 @@
-﻿using CatalogService.Application.Results;
+﻿using CatalogService.Application.Repositories;
+using CatalogService.Application.Results;
 using CatalogService.Domain.Aggregates.ProductAggregate.ValueObjects;
 using MediatR;
 
