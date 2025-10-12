@@ -13,15 +13,18 @@ namespace CatalogService.Persistence
     {
         public static void AddPersistenceServices(this IServiceCollection services)
         {
+            // Registering MongoDB settings
             services.AddSingleton<IMongoClient>(sp =>
             {
                 var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
                 return new MongoClient(settings.ConnectionString);
 
-            }); 
-            services.AddScoped<IMongoDbContext, MongoDbContext>();
+            });
+
+            // Registering MongoDbContext and repositories
+            services.AddScoped<IMongoDbContext, MongoDbContext>();           
             services.AddScoped<ICategoryRepository, CategoryRepository>();
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();          
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }

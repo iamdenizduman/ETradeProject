@@ -10,12 +10,16 @@ namespace CatalogService.Application
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
+            // mediatr
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
 
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly()); 
+            // validators
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            // behaviors
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
