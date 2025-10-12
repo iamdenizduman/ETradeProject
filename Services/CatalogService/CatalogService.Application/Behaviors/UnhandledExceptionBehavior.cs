@@ -5,6 +5,7 @@ namespace CatalogService.Application.Common.Behaviors
 {
     public class UnhandledExceptionBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
     {
         private readonly ILogger<TRequest> _logger;
 
@@ -20,7 +21,7 @@ namespace CatalogService.Application.Common.Behaviors
         {
             try
             {
-                return await next();
+                return await next(cancellationToken);
             }
             catch (Exception ex)
             {

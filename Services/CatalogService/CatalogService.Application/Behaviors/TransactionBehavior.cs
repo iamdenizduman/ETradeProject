@@ -20,13 +20,13 @@ namespace CatalogService.Application.Common.Behaviors
             CancellationToken cancellationToken)
         {
             if (_unitOfWork.HasActiveTransaction)
-                return await next();
+                return await next(cancellationToken);
 
             await _unitOfWork.StartSessionAndTransactionAsync(cancellationToken);
 
             try
             {
-                var response = await next();
+                var response = await next(cancellationToken);
 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return response;
