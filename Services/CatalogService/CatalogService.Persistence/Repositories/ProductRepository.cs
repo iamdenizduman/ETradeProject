@@ -1,15 +1,15 @@
 ﻿using CatalogService.Application.Repositories;
+using CatalogService.Application.Repositories.Contexts;
 using CatalogService.Domain.Aggregates.ProductAggregate;
 using CatalogService.Domain.Aggregates.ProductAggregate.ValueObjects;
-using CatalogService.Persistence.Repositories.Contexts;
 using MongoDB.Driver;
 
 namespace CatalogService.Persistence.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly MongoDbContext _context;
-        public ProductRepository(MongoDbContext context)
+        private readonly IMongoDbContext _context;
+        public ProductRepository(IMongoDbContext context)
         {
             _context = context;
         }
@@ -18,10 +18,10 @@ namespace CatalogService.Persistence.Repositories
             var filter = Builders<Product>.Filter.Eq(p => p.CategoryId, categoryId);
             return await _context.Products.Find(filter).ToListAsync();
         }
-        public async Task UpdateProductAsync(Product product, IClientSessionHandle session)
+        public async Task UpdateProductAsync(Product product)
         {
             var filter = Builders<Product>.Filter.Eq(p => p.Id, product.Id);
-            await _context.Products.ReplaceOneAsync(session, filter, product, new ReplaceOptions { IsUpsert = false });
+            await _context.Products.ReplaceOneAsync(_context.Session, filter, product, new ReplaceOptions { IsUpsert = false });
         }
     }
 }

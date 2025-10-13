@@ -7,6 +7,6 @@ namespace CatalogService.Application.Repositories
     public interface IProductRepository : IRepository<Product>
     {
         Task<IEnumerable<Product>> GetProductsByCategoryId(CategoryId categoryId);
-        Task UpdateProductAsync(Product product, IClientSessionHandle session);
+        Task UpdateProductAsync(Product product);
     }
 }

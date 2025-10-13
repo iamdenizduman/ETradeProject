@@ -1,45 +1,41 @@
 ﻿using CatalogService.Application.Repositories;
-using MongoDB.Driver;
+using CatalogService.Application.Repositories.Contexts;
 
 namespace CatalogService.Persistence.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly IMongoClient _client;
-        private IClientSessionHandle? _session;
-        public bool HasActiveTransaction => _session is not null && _session.IsInTransaction;
-
+        private readonly IMongoDbContext _context;
         public ICategoryRepository CategoryRepository { get; }
-        public IProductRepository ProductRepository { get;  }
+        public IProductRepository ProductRepository { get; }
 
-        public UnitOfWork(IMongoClient client, ICategoryRepository categoryRepository, IProductRepository productRepository)
+        public bool HasActiveTransaction => _context.HasActiveTransaction;  
+
+        public UnitOfWork(IMongoDbContext context, ICategoryRepository categoryRepository, IProductRepository productRepository)
         {
-            _client = client; 
+            _context = context;
             CategoryRepository = categoryRepository;
             ProductRepository = productRepository;
         }
 
         public async Task StartSessionAndTransactionAsync(CancellationToken cancellationToken = default)
         {
-            _session = await _client.StartSessionAsync(cancellationToken: cancellationToken);
-            _session.StartTransaction();
+            await _context.StartSessionAndTransactionAsync(cancellationToken);
         }
 
         public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
-            if (_session?.IsInTransaction == true)
-                await _session.CommitTransactionAsync(cancellationToken);
+            await _context.CommitTransactionAsync(cancellationToken);
         }
 
         public async Task AbortTransactionAsync(CancellationToken cancellationToken = default)
         {
-            if (_session?.IsInTransaction == true)
-                await _session.AbortTransactionAsync(cancellationToken);
+            await _context.AbortTransactionAsync(cancellationToken);
         }
 
         public void Dispose()
         {
-            _session?.Dispose();
+            _context.Dispose();
         }
     }
 }

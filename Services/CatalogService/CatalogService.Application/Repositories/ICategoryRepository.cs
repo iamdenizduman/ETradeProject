@@ -7,6 +7,6 @@ namespace CatalogService.Application.Repositories
     public interface ICategoryRepository : IRepository<Category>
     {
         Task<Category> GetCategoryByCategoryId(CategoryId categoryId);
-        Task UpdateCategoryAsync(Category category, IClientSessionHandle session);
+        Task UpdateCategoryAsync(Category category);
     }
 }
