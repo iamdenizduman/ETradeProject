@@ -15,6 +15,11 @@ namespace CatalogService.Persistence.Repositories
             _context = context;
         }
 
+        public async Task<List<Category>> GetCategories()
+        {
+            return await _context.Categories.Find(_ => true).ToListAsync();
+        }
+
         public async Task<Category> GetCategoryByCategoryId(CategoryId categoryId)
         {
             var filter = Builders<Category>.Filter.Eq(c => c.Id, categoryId.Id);
