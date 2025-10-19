@@ -15,6 +15,11 @@ namespace CatalogService.Persistence.Repositories
             _context = context;
         }
 
+        public async Task AddCategoryAsync(Category category)
+        {
+            await _context.Categories.InsertOneAsync(_context.Session, category);
+        }
+
         public async Task<List<Category>> GetCategories()
         {
             return await _context.Categories.Find(_ => true).ToListAsync();

@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using CatalogService.Domain.Abstracts;
+using MongoDB.Driver;
 
 namespace CatalogService.Application.Repositories
 {
@@ -10,5 +11,7 @@ namespace CatalogService.Application.Repositories
         Task StartSessionAndTransactionAsync(CancellationToken cancellationToken = default);
         Task CommitTransactionAsync(CancellationToken cancellationToken = default);
         Task AbortTransactionAsync(CancellationToken cancellationToken = default);
+        IEnumerable<BaseAggregateRoot> GetTrackedEntitiesWithEvents();
+        void TrackEntity(BaseAggregateRoot entity);
     }
 }

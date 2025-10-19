@@ -8,5 +8,6 @@ namespace CatalogService.Application.Repositories
         Task<List<Category>> GetCategories();
         Task<Category> GetCategoryByCategoryId(CategoryId categoryId);
         Task UpdateCategoryAsync(Category category);
+        Task AddCategoryAsync(Category category);
     }
 }

@@ -40,6 +40,9 @@ namespace CatalogService.Domain.Aggregates.CategoryAggregate
 
             if (name.Length < 3)
                 throw new CategoryDomainException("Kategori adı en az 3 karakter olmalıdır.");
+
+            if (name.Length > 100)
+                throw new CategoryDomainException("Kategori adı en fazla 100 karakter olmalıdır.");
         }
     }
 }

@@ -8,10 +8,12 @@ namespace CatalogService.Application.Common.Behaviors
     where TRequest : IRequest<TResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
 
-        public TransactionBehavior(IUnitOfWork unitOfWork)
+        public TransactionBehavior(IUnitOfWork unitOfWork, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
 
         public async Task<TResponse> Handle(
@@ -28,7 +30,19 @@ namespace CatalogService.Application.Common.Behaviors
             {
                 var response = await next(cancellationToken);
 
+                var domainEntities = _unitOfWork.GetTrackedEntitiesWithEvents();
+                var domainEvents = domainEntities
+                    .SelectMany(e => e.DomainEvents)
+                    .ToList();
+
+                foreach (var domainEvent in domainEvents)
+                    await _mediator.Publish(domainEvent, cancellationToken);
+
+                foreach (var entity in domainEntities)
+                    entity.ClearDomainEvents();
+
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
+
                 return response;
             }
             catch
@@ -42,4 +56,5 @@ namespace CatalogService.Application.Common.Behaviors
             }
         }
     }
+
 }

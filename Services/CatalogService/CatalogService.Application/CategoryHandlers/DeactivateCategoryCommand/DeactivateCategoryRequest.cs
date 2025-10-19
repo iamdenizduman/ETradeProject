@@ -3,10 +3,10 @@ using MediatR;
 
 namespace CatalogService.Application.CategoryHandlers.DeactivateCategoryCommand
 {
-    public class DeactivateCategoryCommand : IRequest<Result>
+    public class DeactivateCategoryRequest : IRequest<Result>
     {
         public string CategoryId { get; }
-        public DeactivateCategoryCommand(string categoryId)
+        public DeactivateCategoryRequest(string categoryId)
         {
             CategoryId = categoryId;
         }

@@ -1,11 +1,14 @@
 ﻿using CatalogService.Application.Repositories;
 using CatalogService.Application.Repositories.Contexts;
+using CatalogService.Domain.Abstracts;
 
 namespace CatalogService.Persistence.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IMongoDbContext _context;
+        private readonly List<BaseAggregateRoot> _trackedEntities = new();
+
         public ICategoryRepository CategoryRepository { get; }
         public IProductRepository ProductRepository { get; }
 
@@ -31,6 +34,17 @@ namespace CatalogService.Persistence.Repositories
         public async Task AbortTransactionAsync(CancellationToken cancellationToken = default)
         {
             await _context.AbortTransactionAsync(cancellationToken);
+        }
+
+        public void TrackEntity(BaseAggregateRoot entity)
+        {
+            if (!_trackedEntities.Contains(entity))
+                _trackedEntities.Add(entity);
+        }
+
+        public IEnumerable<BaseAggregateRoot> GetTrackedEntitiesWithEvents()
+        {
+            return _trackedEntities.Where(e => e.DomainEvents != null && e.DomainEvents.Any());
         }
 
         public void Dispose()

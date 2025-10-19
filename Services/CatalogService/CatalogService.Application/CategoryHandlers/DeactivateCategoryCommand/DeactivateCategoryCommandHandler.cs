@@ -5,7 +5,7 @@ using MediatR;
 
 namespace CatalogService.Application.CategoryHandlers.DeactivateCategoryCommand
 {
-    public class DeactivateCategoryCommandHandler : IRequestHandler<DeactivateCategoryCommand, Result>
+    public class DeactivateCategoryCommandHandler : IRequestHandler<DeactivateCategoryRequest, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
@@ -16,7 +16,7 @@ namespace CatalogService.Application.CategoryHandlers.DeactivateCategoryCommand
             _mediator = mediator;
         }
 
-        public async Task<Result> Handle(DeactivateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeactivateCategoryRequest request, CancellationToken cancellationToken)
         {
             var category = await _unitOfWork.CategoryRepository
                 .GetCategoryByCategoryId(new CategoryId(request.CategoryId));
