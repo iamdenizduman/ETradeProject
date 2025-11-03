@@ -73,7 +73,7 @@ namespace AuthService.Application.Features.Users.RegisterUser
                 var accessToken = _jwtTokenGenerator.GenerateToken(newUser.Id, newUser.Email,
                         RoleType.Customer.ToString());
 
-                var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(newUser.Email);
+                var refreshToken = _jwtTokenGenerator.GenerateRefreshToken();
 
                 var key = $"refreshToken:{refreshToken.Token}";
                 var expiration = refreshToken.Expires - _dateTimeProvider.UtcNow;

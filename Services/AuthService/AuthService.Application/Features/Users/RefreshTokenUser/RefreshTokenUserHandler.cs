@@ -37,7 +37,7 @@ namespace AuthService.Application.Features.Users.RefreshTokenUser
             var newAccessToken = _jwtTokenGenerator.GenerateToken(user.Id, user.Email,
                                  user?.UserOperationClaims?.FirstOrDefault()?.OperationClaim.Role);
 
-            var refreshToken = _jwtTokenGenerator.GenerateRefreshToken(user.Email);
+            var refreshToken = _jwtTokenGenerator.GenerateRefreshToken();
 
             var key = $"refreshToken:{refreshToken.Token}";
             var expiration = refreshToken.Expires - _dateTimeProvider.UtcNow;
