@@ -21,19 +21,23 @@ namespace Shared.Auth
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public string GenerateToken(Guid userId, string email, string role)
+        public string GenerateToken(Guid userId, string email, List<string> roles)
         {
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret));
 
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                  new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-                 new Claim(JwtRegisteredClaimNames.Email, email),
-                 new Claim(ClaimTypes.Role, role),
+                 new Claim(JwtRegisteredClaimNames.Email, email),                 
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: _settings.Issuer,

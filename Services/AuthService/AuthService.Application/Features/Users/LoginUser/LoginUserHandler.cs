@@ -41,7 +41,7 @@ namespace AuthService.Application.Features.Users.LoginUser
                     return Result<LoginUserResponse>.Failure("Kullanıcı adı veya şifre hatalı");
 
                 var accessToken = _jwtTokenGenerator.GenerateToken(user.Id, user.Email,
-                        user?.UserOperationClaims?.FirstOrDefault()?.OperationClaim.Role);
+                                 user?.UserOperationClaims?.Select(uoc => uoc.OperationClaim.Role).ToList());
 
                 var refreshToken = _jwtTokenGenerator.GenerateRefreshToken();
 

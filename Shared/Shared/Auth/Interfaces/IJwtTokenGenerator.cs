@@ -4,7 +4,7 @@ namespace Shared.Auth.Interfaces
 {
     public interface IJwtTokenGenerator
     {
-        string GenerateToken(Guid userId, string email, string role);
+        string GenerateToken(Guid userId, string email, List<string> roles);
         RefreshToken GenerateRefreshToken();
     }
 }

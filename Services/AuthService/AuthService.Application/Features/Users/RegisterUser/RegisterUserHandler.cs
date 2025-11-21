@@ -71,7 +71,7 @@ namespace AuthService.Application.Features.Users.RegisterUser
                 });
 
                 var accessToken = _jwtTokenGenerator.GenerateToken(newUser.Id, newUser.Email,
-                        RoleType.Customer.ToString());
+                        new List<string> { RoleType.Customer.ToString() });
 
                 var refreshToken = _jwtTokenGenerator.GenerateRefreshToken();
 
